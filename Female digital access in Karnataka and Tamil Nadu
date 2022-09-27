@@ -1,0 +1,95 @@
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+library(extrafont)
+library(forcats)
+library(stringr)
+
+# creating the basic plot
+
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall))
+
+#creating a discrete bar graph 
+
+>ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall)) + geom_col()
+
+#To add border outline colour to the bars
+> ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall)) + geom_col(color = "red")
+
+#Adding a title 
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, color = nOverall)) + geom_col() + labs(title = "Overall Education status in Karnataka")
+
+#Adding themes
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, color = nOverall)) + geom_col() + labs(title = "Overall Education status in Karnataka") + theme_economist()
+
+#adding colours to the bars according to different classes
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col() + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "Set1")
+
+#Note: A great palette and graph
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col() + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd")
+
+#To change the width of the bars
+
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col(width = .5 ) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd")
+
+#Flipping the axis
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col(width = .5 ) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + coord_flip()
+
+#To arrange in decreasing order
+ggplot(data = Vrutti_datasheet, aes(x = reorder(Education,nOverall), y = nOverall, fill = Education)) + geom_col(width = .5 ) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + coord_flip()
+
+#Adding labels
+ggplot(data = Vrutti_datasheet, aes(x = reorder(Education,nOverall), y = nOverall, fill = Education)) + geom_col(width = .5 ) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + coord_flip() + geom_text(aes(label = nOverall), nudge_y = 5, color = "black")
+
+#Converting into percentage 
+
+ ggplot(data = Vrutti_datasheet, aes(x = Education, y = Percentage_KN, fill = Education)) + geom_col() + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + geom_text(aes(label = Percentage_KN), nudge_y = 3, color = "black")
+
+#Adding percentage symbol onto the variables
+
+Making the new variable: Vrutti_datasheet <- Vrutti_datasheet %>% mutate(sidelabel = paste0(round(Percentage*100,0), "%"))
+
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = Percentage_Overall, fill = Education)) + geom_col(width = .5) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + geom_text(aes(label = y_label), nudge_y = 3, color = "black")
+
+#Reordering according to levels 
+
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col(width = .5 ) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + coord_flip() + geom_text(aes(label = y_label), nudge_y = 8, color = "black")
+
+#Relevelling
+Vrutti_datasheet$Edu <- fct_relevel(Vrutti_datasheet$Education, "Primary", "Middle School", "High School", "Undergraduation", "Master Degree", "Non formal Education","Total Sample")
+
+#Comparing two groups 
+
+ggplot(Vrutti_datasheet, aes(factor(Marital_Status), Percentage, fill = factor(State))) + geom_col(stat = "identity", position = "dodge") +     ggtitle("Default marital comparison") + theme_fivethirtyeight()
+
+#Final code - Education
+
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col(width = .5 ) + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + coord_flip() + geom_text(aes(label = y_label), nudge_y = 8, color = "black")
+
+#Text wrapping (can be added to any liny of code)
+scale_x_discrete(labels = function(x) str_wrap(x, width = 10))
+
+#Final code - Marital
+
+ggplot(data = Vrutti_datasheet, aes(factor(Marital_Status), Percentage, fill = factor(State))) + geom_col(alpha = 15, stat = "identity", position = "dodge") + labs(title = "Overall age status in Karnataka and Tamil Nadu", size = 2) + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + geom_text(aes(label = y_label), position = position_dodge(0.9), vjust = -0.5, color = "black") + scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) + theme(plot.title = element_text(size = 18)) 
+
+#Final code - Earnings
+
+ggplot(data = Vrutti_datasheet, aes(factor(`Earning members`), Percentage, fill = factor(States))) + geom_col(alpha = 15, stat = "identity", position = "dodge") + labs(title = "Earning members in a family in Karnataka and Tamil Nadu", size = 2) + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + geom_text(aes(label = y_label), position = position_dodge(0.9), vjust = -0.3, color = "black") + scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) + theme(plot.title = element_text(size = 18))
+
+#To remove legend unnecessary deets
+
+theme(legend.direction="horizontal",legend.title = element_blank())
+
+#Final code - Participation 
+
+ggplot(data = Vrutti_datasheet, aes(factor(Training), Percentage, fill = factor(States))) + geom_col(alpha = 15, stat = "identity", position = "dodge") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) + theme(plot.title = element_text(size = 18)) + geom_text(aes(label = y_label), position = position_dodge(0.9), vjust = -0.3, color = "black") + theme(legend.direction="horizontal",legend.title = element_blank())
+
+#Making a line plot
+ggplot(data = Vrutti_datasheet, aes(x = Time_period, y = Percentage, color  = Knowledge, group = Knowledge)) + geom_line() + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd")
+
+ggplot(data = Vrutti_datasheet, aes(x = NewTime, y = Percentage, color  = Knowledge, group = Knowledge)) + geom_line(alpha = 0.8, size = 1.5) + theme_fivethirtyeight() + scale_color_brewer(palette = "YlOrRd") + theme(legend.direction="horizontal",legend.title = element_blank()) + geom_text(aes(label = sidelabel),vjust = -1.2, alpha = 0.7, color = "black", size = 2.5)
+
+#Creating a new column without dplyr 
+
+Vrutti_datasheet$is50 <- Vrutti_datasheet$NewIncome == "Less than 50000"
