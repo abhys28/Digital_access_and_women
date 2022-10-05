@@ -1,20 +1,27 @@
-library(ggplot2)
+```{r}
 library(dplyr)
-library(ggthemes)
-library(extrafont)
-library(forcats)
 library(stringr)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+library(forcats)
 
-# creating the basic plot
+#Cleaning 
+Vrutti_datasheet %>% mutate(MaritalStatus = ifelse(str_detect(Marital_Status, 'children'), str_match(Marital_Status, '(.*)\\schildren')[,2],Marital_Status)) %>% select(MaritalStatus)
+
+Vrutti_datasheet %>% distinct(`Internet connectivity`, Pudukkottai, Kanakapura) %>%
++     pivot_longer(2:3, names_to="States", values_to="Percentage")
+
+# creating the plot
 
 ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall))
 
 #creating a discrete bar graph 
 
->ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall)) + geom_col()
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall)) + geom_col()
 
 #To add border outline colour to the bars
-> ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall)) + geom_col(color = "red")
+ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall)) + geom_col(color = "red")
 
 #Adding a title 
 ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, color = nOverall)) + geom_col() + labs(title = "Overall Education status in Karnataka")
@@ -25,7 +32,6 @@ ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, color = nOveral
 #adding colours to the bars according to different classes
 ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col() + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "Set1")
 
-#Note: A great palette and graph
 ggplot(data = Vrutti_datasheet, aes(x = Education, y = nOverall, fill = Education)) + geom_col() + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd")
 
 #To change the width of the bars
@@ -47,7 +53,9 @@ ggplot(data = Vrutti_datasheet, aes(x = reorder(Education,nOverall), y = nOveral
 
 #Adding percentage symbol onto the variables
 
-Making the new variable: Vrutti_datasheet <- Vrutti_datasheet %>% mutate(sidelabel = paste0(round(Percentage*100,0), "%"))
+#Making the new variable: 
+
+Vrutti_datasheet <- Vrutti_datasheet %>% mutate(sidelabel = paste0(round(Percentage*100,0), "%"))
 
 ggplot(data = Vrutti_datasheet, aes(x = Education, y = Percentage_Overall, fill = Education)) + geom_col(width = .5) + labs(title = "Overall education status in Karnataka and Tamil Nadu") + theme_fivethirtyeight() + scale_fill_brewer(palette = "YlOrRd") + geom_text(aes(label = y_label), nudge_y = 3, color = "black")
 
@@ -90,6 +98,4 @@ ggplot(data = Vrutti_datasheet, aes(x = Time_period, y = Percentage, color  = Kn
 
 ggplot(data = Vrutti_datasheet, aes(x = NewTime, y = Percentage, color  = Knowledge, group = Knowledge)) + geom_line(alpha = 0.8, size = 1.5) + theme_fivethirtyeight() + scale_color_brewer(palette = "YlOrRd") + theme(legend.direction="horizontal",legend.title = element_blank()) + geom_text(aes(label = sidelabel),vjust = -1.2, alpha = 0.7, color = "black", size = 2.5)
 
-#Creating a new column without dplyr 
-
-Vrutti_datasheet$is50 <- Vrutti_datasheet$NewIncome == "Less than 50000"
+```
